@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_expenses_app/widgets/chart.dart';
 import 'package:personal_expenses_app/widgets/newTransaction.dart';
 import 'package:personal_expenses_app/widgets/transactionsList.dart';
 
@@ -12,8 +13,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: HomePage());
+    return MaterialApp(
+        debugShowCheckedModeBanner: false, home: HomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
+
+    );
   }
 }
 
@@ -26,22 +32,28 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Transaction> userTransaction = [
-    Transaction(
-      id: "t1",
-      title: "Shoe",
-      money: 69.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: "t2",
-      title: "car",
-      money: 67.99,
-      date: DateTime.now(),
-    )
+    // Transaction(
+    //   id: "t1",
+    //   title: "Shoe",
+    //   money: 69.99,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t2",
+    //   title: "car",
+    //   money: 67.99,
+    //   date: DateTime.now(),
+    // )
   ];
 
+
+  List<Transaction> get _recentTransaction {
+    return userTransaction.where((element) {
+      return element.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList(); // Convert Iterable<Transaction> to List<Transaction>
+  }
+
   void _addNewTransaction(String title, double amount) {
-    print("Function Called");
     final newTx = Transaction(
       title: title,
       money: amount,
@@ -67,17 +79,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Flutter"),
+        title: Text("Personal Expense",style: TextStyle(fontWeight: FontWeight.bold),),
+        backgroundColor: Theme.of(context).primaryColorLight,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-                width: double.infinity,
-                child: const Card(
-                  color: Colors.orange,
-                  child: Text("Chart"),
-                )),
+            Chart(recentTransaction: _recentTransaction),
             TransactionsList(transaction:userTransaction )
 
           ],
