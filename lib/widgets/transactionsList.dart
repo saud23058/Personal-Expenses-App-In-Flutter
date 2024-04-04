@@ -5,12 +5,15 @@ import '../models/transaction.dart';
 
 class TransactionsList extends StatelessWidget {
   final List<Transaction> transaction;
-  TransactionsList({super.key, required this.transaction});
+  final Function deleteTx;
+
+  TransactionsList(
+      {super.key, required this.transaction, required this.deleteTx});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: 450,
       child: transaction.isEmpty
           ? const Center(
               child: Text(
@@ -20,44 +23,32 @@ class TransactionsList extends StatelessWidget {
           : ListView.builder(
               itemCount: transaction.length,
               itemBuilder: (context, index) {
-                return Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7),
-                          border: Border.all(
-                            color: Theme.of(context).primaryColor,
-                            width: 2,
-                          )),
+                return Card(
+                  elevation: 5,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "\$ ${transaction[index].money.toStringAsFixed(2)}",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        padding: const EdgeInsets.all(6),
+                        child: FittedBox(
+                            child: Text('\$${transaction[index].money}')),
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          transaction[index].title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17),
-                        ),
-                        Text(
-                          DateFormat.yMMMd().format(transaction[index].date),
-                          style: const TextStyle(color: Colors.grey),
-                        )
-                      ],
+                    title: Text(
+                      transaction[index].title,
+                      style: const TextStyle(fontSize: 20),
                     ),
-                  ],
+                    subtitle: Text(
+                        DateFormat.yMMMd().format(transaction[index].date)),
+                    trailing: IconButton(
+                        onPressed: () => deleteTx(transaction[index].id),
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        )),
+                  ),
                 );
               },
             ),

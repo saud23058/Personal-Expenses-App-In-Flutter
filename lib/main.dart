@@ -53,15 +53,21 @@ class _HomePageState extends State<HomePage> {
     }).toList(); // Convert Iterable<Transaction> to List<Transaction>
   }
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount , DateTime chosenDate) {
     final newTx = Transaction(
       title: title,
       money: amount,
       id: DateTime.now().toString(),
-      date: DateTime.now(),
+      date: chosenDate,
     );
     setState(() {
       userTransaction.add(newTx);
+    });
+  }
+
+  void deleteTransaction(String id){
+    setState(() {
+      userTransaction.removeWhere((tx) => tx.id==id );
     });
   }
   void startAddNewTransaction(BuildContext context) {
@@ -79,7 +85,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Personal Expense",style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text("Personal Expense",style: TextStyle(fontWeight: FontWeight.bold),),
         backgroundColor: Theme.of(context).primaryColorLight,
         elevation: 0,
       ),
@@ -87,7 +93,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Chart(recentTransaction: _recentTransaction),
-            TransactionsList(transaction:userTransaction )
+            TransactionsList(transaction:userTransaction,deleteTx: deleteTransaction,)
 
           ],
         ),
